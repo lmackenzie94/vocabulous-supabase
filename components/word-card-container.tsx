@@ -19,25 +19,23 @@ export default function WordCardContainer({
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="flex justify-end mb-4">
-        <div className="inline-flex rounded-md shadow-sm">
-          <Button
-            variant={isGridView ? 'default' : 'outline'}
-            className="rounded-l-md rounded-r-none"
-            onClick={() => setIsGridView(true)}
-            aria-label="Grid view"
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={!isGridView ? 'default' : 'outline'}
-            className="rounded-r-md rounded-l-none"
-            onClick={() => setIsGridView(false)}
-            aria-label="List view"
-          >
-            <List className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="inline-flex rounded-md shadow-sm mb-4">
+        <Button
+          variant={isGridView ? 'default' : 'outline'}
+          className="rounded-l-md rounded-r-none"
+          onClick={() => setIsGridView(true)}
+          aria-label="Grid view"
+        >
+          <LayoutGrid className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={!isGridView ? 'default' : 'outline'}
+          className="rounded-r-md rounded-l-none"
+          onClick={() => setIsGridView(false)}
+          aria-label="List view"
+        >
+          <List className="h-4 w-4" />
+        </Button>
       </div>
 
       <div

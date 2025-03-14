@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "dev:prod": "APP_ENV=production next dev",
     "start": "next start",
     "generate-types": "supabase gen types typescript --project-id ynciswosamttuhzkajyw > database.types.ts"
   },
