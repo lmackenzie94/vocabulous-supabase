@@ -37,7 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <nav className="w-full flex justify-center border-b border-b-foreground/10 mb-12 bg-background">
-            <div className="w-full max-w-5xl flex justify-between items-center py-2 text-sm">
+            <div className="container flex justify-between items-center py-2 text-sm">
               <div className="flex flex-col items-start">
                 <h1 className="text-2xl font-bold">
                   <Link href={'/'}>{TITLE}</Link>

@@ -17,8 +17,11 @@ export default async function AuthButton() {
       {user ? (
         <>
           Hey, {user.email}!
+          <Link href="/practice">
+            <Button variant="default">Practice</Button>
+          </Link>
           <form action={signOutAction}>
-            <Button type="submit" variant={'outline'}>
+            <Button type="submit" variant="white">
               Sign out
             </Button>
           </form>
