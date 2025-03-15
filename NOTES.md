@@ -9,3 +9,4 @@ Ran `supabase db reset` to reset the local database to match the remote database
 - [ ] Add constraints to the database (user can't add same word or category twice)
 - [ ] Add Google auth
 - [ ] Reduce duplication b/w `utils/supabase/client` and `utils/supabase/server` (especially in queries)
+- [ ] Add Prettier
