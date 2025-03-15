@@ -1,9 +1,13 @@
 'use server';
 
-import { encodedRedirect } from '@/utils/utils';
+import { encodedRedirect } from '@/lib/utils';
+import { Category } from '@/types';
+import { requireAuth } from '@/utils/supabase/server/queries';
 import { createClient } from '@/utils/supabase/server';
+import { PostgrestError } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString();
@@ -23,7 +27,10 @@ export const signUpAction = async (formData: FormData) => {
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`
+      emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        first_name: formData.get('first_name')
+      }
     }
   });
 
@@ -53,7 +60,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect('error', '/sign-in', error.message);
   }
 
-  return redirect('/protected');
+  return redirect('/home');
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -67,7 +74,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/protected/reset-password`
+    redirectTo: `${origin}/auth/callback?redirect_to=/home/reset-password`
   });
 
   if (error) {
@@ -99,17 +106,13 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (!password || !confirmPassword) {
     encodedRedirect(
       'error',
-      '/protected/reset-password',
+      '/home/reset-password',
       'Password and confirm password are required'
     );
   }
 
   if (password !== confirmPassword) {
-    encodedRedirect(
-      'error',
-      '/protected/reset-password',
-      'Passwords do not match'
-    );
+    encodedRedirect('error', '/home/reset-password', 'Passwords do not match');
   }
 
   const { error } = await supabase.auth.updateUser({
@@ -117,14 +120,10 @@ export const resetPasswordAction = async (formData: FormData) => {
   });
 
   if (error) {
-    encodedRedirect(
-      'error',
-      '/protected/reset-password',
-      'Password update failed'
-    );
+    encodedRedirect('error', '/home/reset-password', 'Password update failed');
   }
 
-  encodedRedirect('success', '/protected/reset-password', 'Password updated');
+  encodedRedirect('success', '/home/reset-password', 'Password updated');
 };
 
 export const signOutAction = async () => {
@@ -133,7 +132,34 @@ export const signOutAction = async () => {
   return redirect('/sign-in');
 };
 
-export const addCategoryAction = async (name: string) => {
+export const addWordAction = async (formData: FormData): Promise<void> => {
+  const { supabase, user } = await requireAuth();
+
+  const { word, definition, example, category_id } =
+    Object.fromEntries(formData);
+
+  const { data, error } = await supabase
+    .from('words')
+    .insert({
+      word: word as string,
+      definition: definition as string,
+      example: example as string,
+      category_id: category_id as string,
+      user_id: user.id
+    })
+    .select();
+
+  if (error) {
+    console.error(error);
+  }
+
+  console.log('WORD ADDED', data);
+  // return data;
+};
+
+export const addCategoryAction = async (
+  name: string
+): Promise<{ category: Category | null; error: PostgrestError | null }> => {
   const supabase = await createClient();
   const {
     data: { user }
@@ -143,7 +169,7 @@ export const addCategoryAction = async (name: string) => {
     return redirect('/sign-in');
   }
 
-  const { data, error } = await supabase
+  const { data: category, error } = await supabase
     .from('categories')
     .insert({
       name: name.trim(),
@@ -151,11 +177,32 @@ export const addCategoryAction = async (name: string) => {
     })
     .select();
 
+  if (!category || error) {
+    console.error(error);
+    return {
+      category: null,
+      error: error
+    };
+  }
+
+  console.log('CATEGORY ADDED', category);
+
+  return {
+    category: category[0],
+    error: null
+  };
+};
+
+export const deleteWordAction = async (formData: FormData) => {
+  const { supabase } = await requireAuth();
+
+  const { word_id } = Object.fromEntries(formData);
+
+  const { error } = await supabase.from('words').delete().eq('id', word_id);
+
   if (error) {
     console.error(error);
   }
 
-  console.log('DATA', data);
-
-  return data;
+  revalidatePath('/words');
 };

@@ -1,4 +1,4 @@
-import { Tables } from '@/database.types';
+import { Tables } from '@/types/db';
 
 export type Word = Tables<'words'>;
 export type Category = Tables<'categories'>;

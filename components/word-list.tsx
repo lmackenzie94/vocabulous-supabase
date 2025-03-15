@@ -6,13 +6,11 @@ import { Button } from '@/components/ui/button';
 import { LayoutGrid, List } from 'lucide-react';
 import type { WordWithCategory } from '@/types';
 
-interface WordCardContainerProps {
+interface WordListProps {
   words: WordWithCategory[] | null;
 }
 
-export default function WordCardContainer({
-  words = null
-}: WordCardContainerProps) {
+export default function WordList({ words = null }: WordListProps) {
   const [isGridView, setIsGridView] = useState(true);
 
   const displayWords = words ? words : [];

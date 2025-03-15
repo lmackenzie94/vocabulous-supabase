@@ -1,8 +1,9 @@
-import HeaderAuth from '@/components/header-auth';
+import HeaderAuth from '@/components/user-header';
 import { Geist } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import Link from 'next/link';
 import './globals.css';
+import Header from '@/components/header';
 
 const TITLE = 'Vocabulous';
 const DESCRIPTION = 'For a fab vocab.';
@@ -32,22 +33,11 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
           disableTransitionOnChange
         >
-          <nav className="w-full flex justify-center border-b border-b-foreground/10 mb-12 bg-background">
-            <div className="container flex justify-between items-center py-2 text-sm">
-              <div className="flex flex-col items-start">
-                <h1 className="text-2xl font-bold">
-                  <Link href={'/'}>{TITLE}</Link>
-                </h1>
-                <p className="text-xs text-muted-foreground">{DESCRIPTION}</p>
-              </div>
-              <HeaderAuth />
-            </div>
-          </nav>
-          <main className="container">{children}</main>
+          <Header />
+          <main className="container py-36">{children}</main>
         </ThemeProvider>
       </body>
     </html>

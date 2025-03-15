@@ -7,64 +7,119 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       categories: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string
+          updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           name: string
+          updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string
+          updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
       words: {
         Row: {
-          category: number | null
+          category_id: string
           created_at: string
+          date_added: string
           definition: string
-          example_sentence: string | null
-          id: number
-          test: number | null
+          example: string | null
+          id: string
+          mastery: number
+          updated_at: string
           user_id: string
           word: string
         }
         Insert: {
-          category?: number | null
+          category_id: string
           created_at?: string
+          date_added?: string
           definition: string
-          example_sentence?: string | null
-          id?: number
-          test?: number | null
+          example?: string | null
+          id?: string
+          mastery?: number
+          updated_at?: string
           user_id: string
           word: string
         }
         Update: {
-          category?: number | null
+          category_id?: string
           created_at?: string
+          date_added?: string
           definition?: string
-          example_sentence?: string | null
-          id?: number
-          test?: number | null
+          example?: string | null
+          id?: string
+          mastery?: number
+          updated_at?: string
           user_id?: string
           word?: string
         }
         Relationships: [
           {
-            foreignKeyName: "words_category_fkey"
-            columns: ["category"]
+            foreignKeyName: "words_category_id_fkey"
+            columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
             referencedColumns: ["id"]
@@ -183,3 +238,4 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+

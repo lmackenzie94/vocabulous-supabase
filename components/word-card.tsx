@@ -8,9 +8,11 @@ import {
   CardHeader
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Trash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { WordWithCategory } from '@/types';
+import { SubmitButton } from './submit-button';
+import { deleteWordAction } from '@/app/actions';
 
 interface WordCardProps {
   word: WordWithCategory;
@@ -23,7 +25,7 @@ export default function WordCard({
 }: WordCardProps) {
   const [isRevealed, setIsRevealed] = useState(false);
 
-  const { word, definition, example_sentence, category } = wordObject;
+  const { word, definition, example, category, mastery } = wordObject;
 
   if (isListView) {
     return (
@@ -44,8 +46,14 @@ export default function WordCard({
             </p>
 
             <p className={`mt-1 text-sm italic transition-all duration-300`}>
-              {example_sentence}
+              {example}
             </p>
+
+            <div className="flex items-center gap-2 mt-2">
+              <Badge variant="outline" className="h-5">
+                Mastery: {mastery}
+              </Badge>
+            </div>
           </div>
 
           <Button
@@ -61,30 +69,49 @@ export default function WordCard({
             )}
             <span className="sr-only">{isRevealed ? 'Hide' : 'Reveal'}</span>
           </Button>
+          <form action={deleteWordAction} className="ml-2">
+            <input type="hidden" name="word_id" value={wordObject.id} />
+            <SubmitButton
+              type="submit"
+              variant="destructive"
+              size="sm"
+              pendingText="Deleting..."
+            >
+              <Trash className="h-4 w-4" />
+            </SubmitButton>
+          </form>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="w-full transition-all duration-200 hover:shadow-md">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <h3 className="text-2xl font-bold">{word}</h3>
-          <Badge variant="outline">{category?.name}</Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <p
-            className={`${isRevealed ? '' : 'blur-sm select-none'} transition-all duration-300`}
-          >
-            {definition}
-          </p>
-        </div>
-        <p className="italic text-sm">{example_sentence}</p>
-      </CardContent>
-      <CardFooter>
+    <Card className="w-full transition-all duration-200 hover:shadow-md flex flex-col justify-between">
+      <div>
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-center">
+            <h3 className="text-2xl font-bold">{word}</h3>
+            <Badge variant="outline">{category?.name}</Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <p
+              className={`${isRevealed ? '' : 'blur-sm select-none'} transition-all duration-300`}
+            >
+              {definition}
+            </p>
+          </div>
+          <p className="italic text-sm">{example}</p>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="h-5">
+              Mastery: {mastery}
+            </Badge>
+          </div>
+        </CardContent>
+      </div>
+
+      <CardFooter className="flex flex-row gap-2">
         <Button
           variant="outline"
           className="w-full"
@@ -102,6 +129,17 @@ export default function WordCard({
             </>
           )}
         </Button>
+        <form action={deleteWordAction}>
+          <input type="hidden" name="word_id" value={wordObject.id} />
+          <SubmitButton
+            type="submit"
+            variant="destructive"
+            size="sm"
+            pendingText="Deleting..."
+          >
+            <Trash className="h-4 w-4" />
+          </SubmitButton>
+        </form>
       </CardFooter>
     </Card>
   );
