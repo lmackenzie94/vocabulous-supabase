@@ -15,23 +15,20 @@ import { Button } from './ui/button';
 import { addCategoryAction } from '@/app/actions';
 import { Label } from './ui/label';
 interface CategorySelectProps {
-  name: string;
   categories: Category[] | null;
-  formId: string;
   required?: boolean;
+  selectedCategoryId: string;
+  setSelectedCategoryId: (id: string) => void;
 }
 
 export default function CategorySelect({
-  name,
   categories,
-  formId,
+  selectedCategoryId,
+  setSelectedCategoryId,
   required = true
 }: CategorySelectProps) {
   const [localCategories, setLocalCategories] = useState<Category[]>(
     categories || []
-  );
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null
   );
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategory, setNewCategory] = useState('');
@@ -92,32 +89,17 @@ export default function CategorySelect({
     }
   }, [categories]);
 
-  useEffect(() => {
-    const addWordForm = document.getElementById(formId);
-    const handleSubmit = () => {
-      setSelectedCategoryId(null);
-    };
-    addWordForm?.addEventListener('submit', handleSubmit);
-
-    return () => {
-      addWordForm?.removeEventListener('submit', handleSubmit);
-    };
-  }, [formId]);
-
-  console.log('selectedCategoryId', selectedCategoryId);
-
   return (
     <>
       {!showNewCategory ? (
         <div>
-          <Label htmlFor={name}>
+          <Label htmlFor="category">
             Category {required && <span className="text-red-500">*</span>}
             <Select
-              name={name}
               value={selectedCategoryId ?? ''}
               onValueChange={handleCategoryChange}
             >
-              <SelectTrigger className="w-full mt-1">
+              <SelectTrigger id="category" className="w-full mt-1">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>

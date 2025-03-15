@@ -154,6 +154,8 @@ export const addWordAction = async (formData: FormData): Promise<void> => {
   }
 
   console.log('WORD ADDED', data);
+  revalidatePath('/words');
+  redirect('/words');
   // return data;
 };
 

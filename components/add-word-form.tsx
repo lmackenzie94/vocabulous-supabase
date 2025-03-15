@@ -7,19 +7,16 @@ import { Textarea } from './ui/textarea';
 import CategorySelect from './category-select';
 import { addWordAction } from '@/app/actions';
 import { Category } from '@/types';
-
-const FORM_ID = 'add-word-form';
+import { useState } from 'react';
 export default function AddWordForm({
   categories
 }: {
   categories: Category[] | null;
 }) {
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+
   return (
-    <form
-      id={FORM_ID}
-      action={addWordAction}
-      className="space-y-6 animate-fade-in"
-    >
+    <form action={addWordAction} className="space-y-6 animate-fade-in">
       <div className="space-y-4">
         <div>
           <Label htmlFor="word">
@@ -49,10 +46,11 @@ export default function AddWordForm({
         </div>
 
         <CategorySelect
-          name="category_id"
           categories={categories}
-          formId="add-word-form"
+          selectedCategoryId={selectedCategoryId}
+          setSelectedCategoryId={setSelectedCategoryId}
         />
+        <input type="hidden" name="category_id" value={selectedCategoryId} />
 
         <div>
           <Label htmlFor="example">Example sentence (optional)</Label>
