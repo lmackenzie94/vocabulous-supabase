@@ -7,7 +7,7 @@ const BaseHeader = ({ children }: { children: React.ReactNode }) => {
   return (
     <header
       className={cn(
-        'fixed w-full bg-background shadow-md transition-all duration-300 ease-in-out z-50 py-4'
+        'fixed w-full bg-header border-b border-border transition-all duration-300 ease-in-out z-50 py-4'
         // scrolled ? "py-3 shadow-md" : "py-5"
       )}
     >
