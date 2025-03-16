@@ -13,6 +13,7 @@ import { getUserWords } from '@/utils/supabase/server/queries';
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import Stats from '@/components/stats';
+import NoWordsYet from '@/components/no-words-yet';
 
 export default async function Home() {
   const { words } = await getUserWords();
@@ -61,24 +62,7 @@ export default async function Home() {
         />
       </div>
 
-      {words && words.length > 0 ? (
-        <Stats words={words} />
-      ) : (
-        <Card className="bg-muted/50">
-          <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <h3 className="text-xl font-medium mb-2">Get Started</h3>
-              <p className="text-muted-foreground mb-6">
-                Your vocabulary collection is empty. Start by adding your first
-                word.
-              </p>
-              <Button asChild size="lg">
-                <Link href="/add">Add Your First Word</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {words && words.length > 0 ? <Stats words={words} /> : <NoWordsYet />}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { getUserWords, requireAuth } from '@/utils/supabase/server/queries';
 import { Library } from 'lucide-react';
 import WordList from '@/components/word-list';
-
+import NoWordsYet from '@/components/no-words-yet';
 export default async function Words() {
   const { user } = await requireAuth();
   const { words } = await getUserWords();
@@ -19,7 +19,7 @@ export default async function Words() {
           Browse, search, and manage your collection of words.
         </p>
       </div>
-      <WordList words={words} />
+      {words && words.length > 0 ? <WordList words={words} /> : <NoWordsYet />}
     </div>
   );
 }
