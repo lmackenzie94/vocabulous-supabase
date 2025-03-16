@@ -1,7 +1,7 @@
 'use server';
 
 import { encodedRedirect } from '@/lib/utils';
-import { Category } from '@/types';
+import { Category, Word } from '@/types';
 import { requireAuth } from '@/utils/supabase/server/queries';
 import { createClient } from '@/utils/supabase/server';
 import { PostgrestError } from '@supabase/supabase-js';
@@ -132,13 +132,15 @@ export const signOutAction = async () => {
   return redirect('/sign-in');
 };
 
-export const addWordAction = async (formData: FormData): Promise<void> => {
+export const addWordAction = async (
+  formData: FormData
+): Promise<{ word: Word | null; error: PostgrestError | null }> => {
   const { supabase, user } = await requireAuth();
 
   const { word, definition, example, category_id } =
     Object.fromEntries(formData);
 
-  const { data, error } = await supabase
+  const { data: newWord, error } = await supabase
     .from('words')
     .insert({
       word: word as string,
@@ -151,12 +153,19 @@ export const addWordAction = async (formData: FormData): Promise<void> => {
 
   if (error) {
     console.error(error);
+    return {
+      word: null,
+      error: error
+    };
   }
 
-  console.log('WORD ADDED', data);
+  console.log('WORD ADDED', newWord);
   revalidatePath('/words');
-  redirect('/words');
-  // return data;
+
+  return {
+    word: newWord[0],
+    error: error
+  };
 };
 
 export const addCategoryAction = async (
@@ -195,16 +204,29 @@ export const addCategoryAction = async (
   };
 };
 
-export const deleteWordAction = async (formData: FormData) => {
+export const deleteWordAction = async (
+  wordId: string
+): Promise<{ word: Word | null; error: PostgrestError | null }> => {
   const { supabase } = await requireAuth();
 
-  const { word_id } = Object.fromEntries(formData);
-
-  const { error } = await supabase.from('words').delete().eq('id', word_id);
+  const { data: word, error } = await supabase
+    .from('words')
+    .delete()
+    .eq('id', wordId)
+    .select();
 
   if (error) {
     console.error(error);
+    return {
+      word: null,
+      error: error
+    };
   }
 
   revalidatePath('/words');
+
+  return {
+    word: word[0],
+    error: null
+  };
 };

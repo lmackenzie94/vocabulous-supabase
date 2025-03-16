@@ -9,7 +9,7 @@ export default async function Words() {
   const heading = `${user.user_metadata.first_name}'s Vocabulary`;
 
   return (
-    <div className="max-w-3xl mx-auto animate-fade-in">
+    <div className="max-w-5xl mx-auto animate-fade-in">
       <div className="flex flex-col items-center text-center mb-8">
         <div className="p-3 rounded-full bg-indigo-600/10 mb-4">
           <Library className="w-8 h-8 text-indigo-600" />

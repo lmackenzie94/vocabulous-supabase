@@ -1,9 +1,8 @@
-import HeaderAuth from '@/components/user-header';
 import { Geist } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
-import Link from 'next/link';
 import './globals.css';
 import Header from '@/components/header';
+import { Toaster } from '@/components/ui/sonner';
 
 const TITLE = 'Vocabulous';
 const DESCRIPTION = 'For a fab vocab.';
@@ -38,6 +37,7 @@ export default function RootLayout({
         >
           <Header />
           <main className="container py-36">{children}</main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

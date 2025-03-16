@@ -16,7 +16,7 @@ export default function WordList({ words = null }: WordListProps) {
   const displayWords = words ? words : [];
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <>
       <div className="inline-flex rounded-md shadow-sm mb-4">
         <Button
           variant={isGridView ? 'default' : 'outline'}
@@ -45,6 +45,6 @@ export default function WordList({ words = null }: WordListProps) {
           <WordCard key={index} word={word} isListView={!isGridView} />
         ))}
       </div>
-    </div>
+    </>
   );
 }

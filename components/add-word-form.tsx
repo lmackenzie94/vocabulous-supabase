@@ -8,6 +8,8 @@ import CategorySelect from './category-select';
 import { addWordAction } from '@/app/actions';
 import { Category } from '@/types';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { redirect } from 'next/navigation';
 export default function AddWordForm({
   categories
 }: {
@@ -15,8 +17,19 @@ export default function AddWordForm({
 }) {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
 
+  const handleSubmit = async (formData: FormData) => {
+    const { word, error } = await addWordAction(formData);
+    if (!word || error) {
+      console.error(error);
+      toast.error('Failed to add word');
+      return;
+    }
+    toast.success(`"${word.word}" has been added to your vocabulary`);
+    redirect('/words');
+  };
+
   return (
-    <form action={addWordAction} className="space-y-6 animate-fade-in">
+    <form action={handleSubmit} className="space-y-6 animate-fade-in">
       <div className="space-y-4">
         <div>
           <Label htmlFor="word">

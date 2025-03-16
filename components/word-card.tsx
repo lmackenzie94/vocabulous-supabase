@@ -1,145 +1,151 @@
 'use client';
 
-import { useState } from 'react';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, Trash } from 'lucide-react';
+import { Pen, Trash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { WordWithCategory } from '@/types';
-import { SubmitButton } from './submit-button';
 import { deleteWordAction } from '@/app/actions';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface WordCardProps {
   word: WordWithCategory;
   isListView?: boolean;
 }
 
-export default function WordCard({
-  word: wordObject,
-  isListView = false
-}: WordCardProps) {
-  const [isRevealed, setIsRevealed] = useState(false);
+export default function WordCard({ word, isListView }: WordCardProps) {
+  const handleDelete = async (wordId: string) => {
+    const { word, error } = await deleteWordAction(wordId);
+    if (!word || error) {
+      console.error(error);
+      toast.error('Failed to delete word');
+      return;
+    }
 
-  const { word, definition, example, category, mastery } = wordObject;
+    toast.success(`"${word.word}" has been removed from your vocabulary`);
+  };
 
-  if (isListView) {
-    return (
-      <Card className="w-full transition-all duration-200 hover:shadow-md">
-        <div className="flex flex-row items-center p-3">
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold">{word}</h3>
-              <Badge variant="outline" className="h-5">
-                {category?.name}
-              </Badge>
-            </div>
+  const getMasteryColor = (mastery: number) => {
+    if (mastery < 30) return 'bg-red-100 text-red-800';
+    if (mastery < 70) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-green-100 text-green-800';
+  };
 
-            <p
-              className={`mt-1 text-sm ${isRevealed ? '' : 'blur-sm select-none'} transition-all duration-300`}
-            >
-              {definition}
-            </p>
+  const getMasteryLabel = (mastery: number) => {
+    if (mastery < 30) return 'Beginner';
+    if (mastery < 70) return 'Familiar';
+    return 'Mastered';
+  };
 
-            <p className={`mt-1 text-sm italic transition-all duration-300`}>
-              {example}
-            </p>
-
-            <div className="flex items-center gap-2 mt-2">
-              <Badge variant="outline" className="h-5">
-                Mastery: {mastery}
-              </Badge>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-4 shrink-0"
-            onClick={() => setIsRevealed(!isRevealed)}
-          >
-            {isRevealed ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-            <span className="sr-only">{isRevealed ? 'Hide' : 'Reveal'}</span>
-          </Button>
-          <form action={deleteWordAction} className="ml-2">
-            <input type="hidden" name="word_id" value={wordObject.id} />
-            <SubmitButton
-              type="submit"
-              variant="destructive"
-              size="sm"
-              pendingText="Deleting..."
-            >
-              <Trash className="h-4 w-4" />
-            </SubmitButton>
-          </form>
+  return isListView ? (
+    <div className="flex items-center justify-between py-3 px-4 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="flex-shrink-0">
+          <Badge className={cn('h-6', getMasteryColor(word.mastery))}>
+            {getMasteryLabel(word.mastery)}
+          </Badge>
         </div>
-      </Card>
-    );
-  }
 
-  return (
-    <Card className="w-full transition-all duration-200 hover:shadow-md flex flex-col justify-between">
-      <div>
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-center">
-            <h3 className="text-2xl font-bold">{word}</h3>
-            <Badge variant="outline">{category?.name}</Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <p
-              className={`${isRevealed ? '' : 'blur-sm select-none'} transition-all duration-300`}
-            >
-              {definition}
-            </p>
-          </div>
-          <p className="italic text-sm">{example}</p>
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="h-5">
-              Mastery: {mastery}
+            <h3 className="font-medium truncate">{word.word}</h3>
+            <Badge
+              variant="outline"
+              className="text-xs bg-secondary text-secondary-foreground flex-shrink-0"
+            >
+              {word.category.name}
             </Badge>
           </div>
+          <p className="text-sm text-muted-foreground truncate">
+            {word.definition}
+          </p>
+          {word.example && (
+            <p className="text-xs italic text-muted-foreground truncate mt-0.5">
+              "{word.example}"
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex gap-1 ml-2 flex-shrink-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => console.log('edit')}
+          className="h-8 w-8 text-blue-400 hover:text-blue-500"
+        >
+          <Pen className="h-4 w-4" />
+          <span className="sr-only">Edit</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => handleDelete(word.id)}
+          className="h-8 w-8 text-red-400 hover:text-red-500"
+        >
+          <Trash className="h-4 w-4" />
+          <span className="sr-only">Delete</span>
+        </Button>
+      </div>
+    </div>
+  ) : (
+    <Card className="border flex flex-col justify-between">
+      <div>
+        <CardHeader className="pb-3">
+          <div className="flex justify-between items-start">
+            <div>
+              <Badge className="mb-2 bg-secondary text-secondary-foreground">
+                {word.category.name}
+              </Badge>
+              <CardTitle className="text-xl">{word.word}</CardTitle>
+              <CardDescription className="mt-1 line-clamp-2">
+                {word.definition}
+              </CardDescription>
+            </div>
+            <Badge className={cn('ml-2', getMasteryColor(word.mastery))}>
+              {getMasteryLabel(word.mastery)}
+            </Badge>
+          </div>
+        </CardHeader>
+
+        <CardContent className="pb-3 pt-0">
+          {word.example && (
+            <div className="mt-2">
+              <p className="italic text-sm">"{word.example}"</p>
+            </div>
+          )}
         </CardContent>
       </div>
 
-      <CardFooter className="flex flex-row gap-2">
+      <CardFooter className="">
         <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => setIsRevealed(!isRevealed)}
+          variant="ghost"
+          size="sm"
+          onClick={() => console.log('edit')}
+          className="text-muted-foreground hover:text-blue-500 text-sm"
         >
-          {isRevealed ? (
-            <>
-              <EyeOff className="mr-2 h-4 w-4" />
-              Hide
-            </>
-          ) : (
-            <>
-              <Eye className="mr-2 h-4 w-4" />
-              Reveal
-            </>
-          )}
+          <Pen className="h-4 w-4 mr-1" />
+          Edit
         </Button>
-        <form action={deleteWordAction}>
-          <input type="hidden" name="word_id" value={wordObject.id} />
-          <SubmitButton
-            type="submit"
-            variant="destructive"
-            size="sm"
-            pendingText="Deleting..."
-          >
-            <Trash className="h-4 w-4" />
-          </SubmitButton>
-        </form>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleDelete(word.id)}
+          className="text-muted-foreground hover:text-destructive text-sm"
+        >
+          <Trash className="h-4 w-4 mr-1" />
+          Delete
+        </Button>
       </CardFooter>
     </Card>
   );
