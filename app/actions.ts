@@ -168,6 +168,42 @@ export const addWordAction = async (
   };
 };
 
+export const editWordAction = async (
+  wordId: string,
+  formData: FormData
+): Promise<{ word: Word | null; error: PostgrestError | null }> => {
+  const { supabase } = await requireAuth();
+
+  const { word, definition, example, category_id } =
+    Object.fromEntries(formData);
+
+  const { data: updatedWord, error } = await supabase
+    .from('words')
+    .update({
+      word: word as string,
+      definition: definition as string,
+      example: example as string,
+      category_id: category_id as string
+    })
+    .eq('id', wordId)
+    .select();
+
+  if (error) {
+    console.error(error);
+    return {
+      word: null,
+      error: error
+    };
+  }
+
+  revalidatePath('/words');
+
+  return {
+    word: updatedWord[0],
+    error: null
+  };
+};
+
 export const addCategoryAction = async (
   name: string
 ): Promise<{ category: Category | null; error: PostgrestError | null }> => {

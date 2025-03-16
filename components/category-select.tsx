@@ -18,13 +18,13 @@ interface CategorySelectProps {
   categories: Category[] | null;
   required?: boolean;
   selectedCategoryId: string;
-  setSelectedCategoryId: (id: string) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function CategorySelect({
   categories,
   selectedCategoryId,
-  setSelectedCategoryId,
+  onChange,
   required = true
 }: CategorySelectProps) {
   const [localCategories, setLocalCategories] = useState<Category[]>(
@@ -51,14 +51,15 @@ export default function CategorySelect({
     if (category) {
       setShowNewCategory(false);
       setLocalCategories(prev => [...prev, category]);
-      setSelectedCategoryId(category.id);
+      onChange({
+        target: { name: 'category_id', value: category.id }
+      } as React.ChangeEvent<HTMLInputElement>);
       setNewCategory('');
     }
     setIsAddingCategory(false);
   };
 
   const handleCategoryChange = (value: string) => {
-    console.log('handleCategoryChange', value);
     if (value === 'new') {
       setShowNewCategory(true);
     }
@@ -67,7 +68,9 @@ export default function CategorySelect({
       category => category.id === value
     );
     if (selectedCategory) {
-      setSelectedCategoryId(selectedCategory.id);
+      onChange({
+        target: { name: 'category_id', value: selectedCategory.id }
+      } as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
@@ -75,6 +78,13 @@ export default function CategorySelect({
     setShowNewCategory(false);
     setNewCategory('');
     setError(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddCategory();
+    }
   };
 
   useEffect(() => {
@@ -124,6 +134,7 @@ export default function CategorySelect({
             ref={newCategoryInputRef}
             value={newCategory}
             onChange={e => setNewCategory(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Enter new category name"
             className="flex-1"
           />
@@ -145,6 +156,11 @@ export default function CategorySelect({
         </div>
       )}
       {error && <p className="text-red-500 text-sm">{error}</p>}
+      <input
+        type="hidden"
+        name="category_id"
+        defaultValue={selectedCategoryId}
+      />
     </>
   );
 }

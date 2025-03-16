@@ -17,7 +17,6 @@ CREATE TABLE public.words (
   category_id UUID REFERENCES public.categories(id) NOT NULL,
   example TEXT,
   mastery INTEGER NOT NULL DEFAULT 0,
-  date_added TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   UNIQUE(user_id, word),
@@ -110,7 +109,19 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.create_default_category_and_profile();
 
+-- Function to update the updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = now();
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
 
+-- Trigger to update the updated_at timestamp
+CREATE TRIGGER update_words_updated_at
+BEFORE UPDATE ON public.words
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 
 

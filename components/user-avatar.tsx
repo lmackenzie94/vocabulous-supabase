@@ -28,13 +28,6 @@ export default function UserAvatar({ user }: { user: User }) {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      console.log('clicked outside');
-      console.log('target', event.target);
-      console.log('dropdownRef', dropdownRef.current);
-      console.log(
-        'contains',
-        !dropdownRef.current?.contains(event.target as Node)
-      );
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)

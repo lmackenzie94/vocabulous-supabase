@@ -6,6 +6,16 @@ export default async function Words() {
   const { user } = await requireAuth();
   const { words } = await getUserWords();
 
+  words?.forEach(word => {
+    const createdAt = new Date(word.created_at);
+    const updatedAt = new Date(word.updated_at);
+    console.table({
+      word: word.word,
+      createdAt,
+      updatedAt
+    });
+  });
+
   const heading = `${user.user_metadata.first_name}'s Vocabulary`;
 
   return (

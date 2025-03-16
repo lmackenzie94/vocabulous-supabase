@@ -1,10 +1,4 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { getUserCategories } from '@/utils/supabase/server/queries';
-import { addWordAction } from '@/app/actions';
-import { SubmitButton } from '@/components/submit-button';
-import CategorySelect from '@/components/category-select';
 import AddWordForm from '@/components/add-word-form';
 import { BookPlus } from 'lucide-react';
 

@@ -61,19 +61,19 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
-          first_name: string | null
+          first_name: string
           id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
-          first_name?: string | null
+          first_name: string
           id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
-          first_name?: string | null
+          first_name?: string
           id?: string
           updated_at?: string
         }
@@ -83,7 +83,6 @@ export type Database = {
         Row: {
           category_id: string
           created_at: string
-          date_added: string
           definition: string
           example: string | null
           id: string
@@ -95,7 +94,6 @@ export type Database = {
         Insert: {
           category_id: string
           created_at?: string
-          date_added?: string
           definition: string
           example?: string | null
           id?: string
@@ -107,7 +105,6 @@ export type Database = {
         Update: {
           category_id?: string
           created_at?: string
-          date_added?: string
           definition?: string
           example?: string | null
           id?: string

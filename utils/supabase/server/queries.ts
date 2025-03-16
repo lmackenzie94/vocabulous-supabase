@@ -74,6 +74,26 @@ export async function getUserWords(): Promise<{
   return { words, error: null };
 }
 
+export async function getUserWordById(id: string): Promise<{
+  word: WordWithCategory | null;
+  error: Error | null;
+}> {
+  const { supabase } = await getAuth();
+
+  const { data: word, error } = await supabase
+    .from('words')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return { word: null, error };
+  }
+
+  return { word, error: null };
+}
+
 // NOTE: don't need to specify user_id because the RLS policy only allows access to the user's own categories
 export async function getUserCategories(): Promise<{
   categories: Category[] | null;

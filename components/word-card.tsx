@@ -15,6 +15,7 @@ import type { WordWithCategory } from '@/types';
 import { deleteWordAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface WordCardProps {
   word: WordWithCategory;
@@ -46,7 +47,7 @@ export default function WordCard({ word, isListView }: WordCardProps) {
   };
 
   return isListView ? (
-    <div className="flex items-center justify-between py-3 px-4 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+    <div className="flex items-center justify-between py-3 px-4 shadow-sm transition-all duration-200 bg-card rounded-lg">
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex-shrink-0">
           <Badge className={cn('h-6', getMasteryColor(word.mastery))}>
@@ -56,7 +57,7 @@ export default function WordCard({ word, isListView }: WordCardProps) {
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium truncate">{word.word}</h3>
+            <h3 className="font-medium">{word.word}</h3>
             <Badge
               variant="outline"
               className="text-xs bg-secondary text-secondary-foreground flex-shrink-0"
@@ -64,11 +65,9 @@ export default function WordCard({ word, isListView }: WordCardProps) {
               {word.category.name}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground truncate">
-            {word.definition}
-          </p>
+          <p className="text-sm text-muted-foreground">{word.definition}</p>
           {word.example && (
-            <p className="text-xs italic text-muted-foreground truncate mt-0.5">
+            <p className="text-xs italic text-muted-foreground mt-0.5">
               "{word.example}"
             </p>
           )}
@@ -79,11 +78,12 @@ export default function WordCard({ word, isListView }: WordCardProps) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => console.log('edit')}
+          asChild
           className="h-8 w-8 text-blue-400 hover:text-blue-500"
         >
-          <Pen className="h-4 w-4" />
-          <span className="sr-only">Edit</span>
+          <Link href={`/edit/${word.id}`}>
+            <Pen className="h-4 w-4" />
+          </Link>
         </Button>
 
         <Button
@@ -130,11 +130,13 @@ export default function WordCard({ word, isListView }: WordCardProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => console.log('edit')}
+          asChild
           className="text-muted-foreground hover:text-blue-500 text-sm"
         >
-          <Pen className="h-4 w-4 mr-1" />
-          Edit
+          <Link href={`/edit/${word.id}`}>
+            <Pen className="h-4 w-4 mr-1" />
+            Edit
+          </Link>
         </Button>
 
         <Button

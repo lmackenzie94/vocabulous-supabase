@@ -5,40 +5,29 @@ import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import CategorySelect from './category-select';
-import { addWordAction } from '@/app/actions';
-import { Category, Word } from '@/types';
+import { addWordAction, editWordAction } from '@/app/actions';
+import { Category, WordWithCategory } from '@/types';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { redirect } from 'next/navigation';
 
-type NewWordObject = Pick<
-  Word,
-  'word' | 'definition' | 'category_id' | 'example'
->;
-
-const initialWordObject: NewWordObject = {
-  word: '',
-  definition: '',
-  category_id: '',
-  example: ''
-};
-
-export default function AddWordForm({
-  categories
+export default function EditWordForm({
+  categories,
+  word: wordObject
 }: {
   categories: Category[] | null;
+  word: WordWithCategory;
 }) {
-  const [newWordObject, setNewWordObject] =
-    useState<NewWordObject>(initialWordObject);
+  const [updatedWordObject, setUpdatedWordObject] = useState(wordObject);
 
   const handleSubmit = async (formData: FormData) => {
-    const { word, error } = await addWordAction(formData);
+    const { word, error } = await editWordAction(wordObject.id, formData);
     if (!word || error) {
       console.error(error);
-      toast.error('Failed to add word');
+      toast.error('Failed to edit word');
       return;
     }
-    toast.success(`"${word.word}" has been added to your vocabulary`);
+    toast.success(`"${word.word}" has been updated`);
     redirect('/words');
   };
 
@@ -46,13 +35,12 @@ export default function AddWordForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setNewWordObject(prev => ({
+    console.log(name, value);
+    setUpdatedWordObject(prev => ({
       ...prev,
       [name]: value
     }));
   };
-
-  console.log(newWordObject);
 
   return (
     <form
@@ -67,7 +55,7 @@ export default function AddWordForm({
           <Input
             id="word"
             name="word"
-            value={newWordObject.word}
+            value={updatedWordObject.word}
             onChange={handleChange}
             className="mt-1"
             placeholder="Enter a word or phrase"
@@ -83,7 +71,7 @@ export default function AddWordForm({
           <Textarea
             id="definition"
             name="definition"
-            value={newWordObject.definition}
+            value={updatedWordObject.definition}
             onChange={handleChange}
             className="mt-1 min-h-24"
             placeholder="What does it mean?"
@@ -93,7 +81,7 @@ export default function AddWordForm({
 
         <CategorySelect
           categories={categories}
-          selectedCategoryId={newWordObject.category_id}
+          selectedCategoryId={updatedWordObject.category_id}
           onChange={handleChange}
         />
 
@@ -102,7 +90,7 @@ export default function AddWordForm({
           <Textarea
             id="example"
             name="example"
-            value={newWordObject.example || ''}
+            value={updatedWordObject.example || ''}
             onChange={handleChange}
             className="mt-1 min-h-24"
             placeholder="Use the word in a sentence"
@@ -111,10 +99,10 @@ export default function AddWordForm({
       </div>
 
       <SubmitButton
-        pendingText="Adding..."
-        className="w-full bg-green-600 hover:bg-green-700"
+        pendingText="Editing..."
+        className="w-full bg-blue-600 hover:bg-blue-700"
       >
-        Add to my vocabulary
+        Edit word
       </SubmitButton>
     </form>
   );
