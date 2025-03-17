@@ -51,7 +51,7 @@ export default function UserHeader({ user }: { user: User }) {
   const pathname = usePathname();
 
   return (
-    <div className="relative container mx-auto px-4">
+    <div className="relative container mx-auto">
       <nav className="flex justify-center">
         <ul className="flex items-center gap-2 sm:gap-6 justify-center">
           {navItems.map(item => {

@@ -24,7 +24,7 @@ export default function EditWordForm({
     const { word, error } = await editWordAction(wordObject.id, formData);
     if (!word || error) {
       console.error(error);
-      toast.error('Failed to edit word');
+      toast.error(error?.message || 'Failed to edit word');
       return;
     }
     toast.success(`"${word.word}" has been updated`);

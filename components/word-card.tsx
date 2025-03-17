@@ -27,7 +27,7 @@ export default function WordCard({ word, isListView }: WordCardProps) {
     const { word, error } = await deleteWordAction(wordId);
     if (!word || error) {
       console.error(error);
-      toast.error('Failed to delete word');
+      toast.error(error?.message || 'Failed to delete word');
       return;
     }
 

@@ -35,7 +35,7 @@ export default function AddWordForm({
     const { word, error } = await addWordAction(formData);
     if (!word || error) {
       console.error(error);
-      toast.error('Failed to add word');
+      toast.error(error?.message || 'Failed to add word');
       return;
     }
     toast.success(`"${word.word}" has been added to your vocabulary`);

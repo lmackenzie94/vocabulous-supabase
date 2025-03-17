@@ -4,11 +4,15 @@ import { encodedRedirect } from '@/lib/utils';
 import { Category, Word } from '@/types';
 import { requireAuth } from '@/utils/supabase/server/queries';
 import { createClient } from '@/utils/supabase/server';
-import { PostgrestError } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { isDemoUser } from '@/utils/supabase';
 
+const DEMO_USER_ERROR_MESSAGE = "Sorry, you can look but you can't touch! 🙅🏻‍♂️";
+
+// AUTH ACTIONS
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString();
   const password = formData.get('password')?.toString();
@@ -54,6 +58,20 @@ export const signInAction = async (formData: FormData) => {
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password
+  });
+
+  if (error) {
+    return encodedRedirect('error', '/sign-in', error.message);
+  }
+
+  return redirect('/home');
+};
+
+export const signInAsDemoUserAction = async () => {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: 'demo@example.com',
+    password: 'password'
   });
 
   if (error) {
@@ -132,10 +150,24 @@ export const signOutAction = async () => {
   return redirect('/sign-in');
 };
 
+// WORD ACTIONS
+type CustomError = {
+  message: string | null;
+};
+
 export const addWordAction = async (
   formData: FormData
-): Promise<{ word: Word | null; error: PostgrestError | null }> => {
+): Promise<{ word: Word | null; error: CustomError | null }> => {
   const { supabase, user } = await requireAuth();
+
+  if (isDemoUser(user)) {
+    return {
+      word: null,
+      error: {
+        message: DEMO_USER_ERROR_MESSAGE
+      }
+    };
+  }
 
   const { word, definition, example, category_id } =
     Object.fromEntries(formData);
@@ -151,28 +183,39 @@ export const addWordAction = async (
     })
     .select();
 
-  if (error) {
+  if (!newWord || error) {
     console.error(error);
+
     return {
       word: null,
-      error: error
+      error: {
+        message: error.message
+      }
     };
   }
 
-  console.log('WORD ADDED', newWord);
   revalidatePath('/words');
 
   return {
     word: newWord[0],
-    error: error
+    error: null
   };
 };
 
 export const editWordAction = async (
   wordId: string,
   formData: FormData
-): Promise<{ word: Word | null; error: PostgrestError | null }> => {
-  const { supabase } = await requireAuth();
+): Promise<{ word: Word | null; error: CustomError | null }> => {
+  const { supabase, user } = await requireAuth();
+
+  if (isDemoUser(user)) {
+    return {
+      word: null,
+      error: {
+        message: DEMO_USER_ERROR_MESSAGE
+      }
+    };
+  }
 
   const { word, definition, example, category_id } =
     Object.fromEntries(formData);
@@ -188,11 +231,13 @@ export const editWordAction = async (
     .eq('id', wordId)
     .select();
 
-  if (error) {
+  if (!updatedWord || error) {
     console.error(error);
     return {
       word: null,
-      error: error
+      error: {
+        message: error.message
+      }
     };
   }
 
@@ -206,14 +251,16 @@ export const editWordAction = async (
 
 export const addCategoryAction = async (
   name: string
-): Promise<{ category: Category | null; error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+): Promise<{ category: Category | null; error: CustomError | null }> => {
+  const { supabase, user } = await requireAuth();
 
-  if (!user) {
-    return redirect('/sign-in');
+  if (isDemoUser(user)) {
+    return {
+      category: null,
+      error: {
+        message: DEMO_USER_ERROR_MESSAGE
+      }
+    };
   }
 
   const { data: category, error } = await supabase
@@ -228,11 +275,11 @@ export const addCategoryAction = async (
     console.error(error);
     return {
       category: null,
-      error: error
+      error: {
+        message: error.message
+      }
     };
   }
-
-  console.log('CATEGORY ADDED', category);
 
   return {
     category: category[0],
@@ -242,8 +289,17 @@ export const addCategoryAction = async (
 
 export const deleteWordAction = async (
   wordId: string
-): Promise<{ word: Word | null; error: PostgrestError | null }> => {
-  const { supabase } = await requireAuth();
+): Promise<{ word: Word | null; error: CustomError | null }> => {
+  const { supabase, user } = await requireAuth();
+
+  if (isDemoUser(user)) {
+    return {
+      word: null,
+      error: {
+        message: DEMO_USER_ERROR_MESSAGE
+      }
+    };
+  }
 
   const { data: word, error } = await supabase
     .from('words')
@@ -251,11 +307,13 @@ export const deleteWordAction = async (
     .eq('id', wordId)
     .select();
 
-  if (error) {
+  if (!word || error) {
     console.error(error);
     return {
       word: null,
-      error: error
+      error: {
+        message: error.message
+      }
     };
   }
 
