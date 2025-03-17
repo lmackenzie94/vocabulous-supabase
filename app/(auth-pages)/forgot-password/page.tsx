@@ -13,7 +13,7 @@ export default async function ForgotPassword(props: {
   const searchParams = await props.searchParams;
 
   return (
-    <div className="min-w-80 mx-auto animate-fade-in">
+    <div className="w-full max-w-sm mx-auto animate-fade-in">
       <div className="flex flex-col items-center text-center mb-8">
         <div className="p-3 rounded-full bg-red-600/10 mb-4">
           <KeyRound className="w-8 h-8 text-red-600" />

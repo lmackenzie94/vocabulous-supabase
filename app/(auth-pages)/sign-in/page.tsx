@@ -11,7 +11,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
 
   return (
-    <div className="min-w-80 mx-auto animate-fade-in">
+    <div className="w-full max-w-sm mx-auto animate-fade-in">
       <div className="flex flex-col items-center text-center mb-8">
         <div className="p-3 rounded-full bg-indigo-600/10 mb-4">
           <BookMarked className="w-8 h-8 text-indigo-600" />
@@ -73,7 +73,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           <Button
             type="button"
             onClick={signInAsDemoUserAction}
-            className="w-full bg-orange-600 hover:bg-orange-700 mt-1"
+            className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 mt-1"
           >
             Sign In as Demo User
           </Button>

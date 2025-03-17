@@ -23,7 +23,6 @@ export default function EditWordForm({
   const handleSubmit = async (formData: FormData) => {
     const { word, error } = await editWordAction(wordObject.id, formData);
     if (!word || error) {
-      console.error(error);
       toast.error(error?.message || 'Failed to edit word');
       return;
     }

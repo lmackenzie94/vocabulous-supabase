@@ -34,7 +34,6 @@ export default function AddWordForm({
   const handleSubmit = async (formData: FormData) => {
     const { word, error } = await addWordAction(formData);
     if (!word || error) {
-      console.error(error);
       toast.error(error?.message || 'Failed to add word');
       return;
     }

@@ -1,4 +1,4 @@
-import { AuthError, SupabaseClient, User } from '@supabase/supabase-js';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import { createClient } from '.';
 import { redirect } from 'next/navigation';
 import { Category, Word, WordWithCategory } from '@/types';

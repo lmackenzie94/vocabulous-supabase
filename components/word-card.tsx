@@ -16,22 +16,33 @@ import { deleteWordAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { useState } from 'react';
+import ProgressButton from './progess-button';
 
 interface WordCardProps {
   word: WordWithCategory;
   isListView?: boolean;
 }
 
+const DELETING_TIMEOUT = 4; // seconds
 export default function WordCard({ word, isListView }: WordCardProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDelete = async (wordId: string) => {
+    setIsDeleting(true);
     const { word, error } = await deleteWordAction(wordId);
     if (!word || error) {
-      console.error(error);
       toast.error(error?.message || 'Failed to delete word');
+      setIsDeleting(false);
       return;
     }
 
     toast.success(`"${word.word}" has been removed from your vocabulary`);
+    setIsDeleting(false);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleting(false);
   };
 
   const getMasteryColor = (mastery: number) => {
@@ -47,8 +58,18 @@ export default function WordCard({ word, isListView }: WordCardProps) {
   };
 
   return isListView ? (
-    <div className="flex items-center justify-between py-3 px-4 shadow-sm transition-all duration-200 bg-card rounded-lg">
-      <div className="flex items-center gap-3 min-w-0">
+    <div
+      className={cn(
+        'flex items-center justify-between py-3 px-4 shadow-sm transition-all duration-200 bg-card rounded-lg',
+        isDeleting && 'border border-red-400 border-dashed'
+      )}
+    >
+      <div
+        className={cn(
+          'flex items-center gap-3 min-w-0',
+          isDeleting && 'opacity-50'
+        )}
+      >
         <div className="flex-shrink-0">
           <Badge className={cn('h-6', getMasteryColor(word.mastery))}>
             {getMasteryLabel(word.mastery)}
@@ -56,7 +77,7 @@ export default function WordCard({ word, isListView }: WordCardProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-0.5">
             <h3 className="font-medium">{word.word}</h3>
             <Badge
               variant="outline"
@@ -65,41 +86,61 @@ export default function WordCard({ word, isListView }: WordCardProps) {
               {word.category.name}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">{word.definition}</p>
+          <p className="text-sm text-foreground/75">{word.definition}</p>
           {word.example && (
-            <p className="text-xs italic text-muted-foreground mt-0.5">
+            <p className="text-xs italic text-muted-foreground mt-1.5">
               "{word.example}"
             </p>
           )}
         </div>
       </div>
 
-      <div className="flex gap-1 ml-2 flex-shrink-0">
-        <Button
-          variant="ghost"
-          size="icon"
-          asChild
-          className="h-8 w-8 text-blue-400 hover:text-blue-500"
-        >
-          <Link href={`/edit/${word.id}`}>
-            <Pen className="h-4 w-4" />
-          </Link>
-        </Button>
+      <div className="flex gap-1 ml-2 flex-shrink-0 items-center">
+        {isDeleting ? (
+          <ProgressButton
+            duration={DELETING_TIMEOUT}
+            onClick={handleCancelDelete}
+            onComplete={() => handleDelete(word.id)}
+          >
+            <p>Cancel</p>
+          </ProgressButton>
+        ) : (
+          <>
+            <Button variant="ghost" size="icon" asChild>
+              <Link href={`/edit/${word.id}`}>
+                <Pen className="h-4 w-4 text-blue-400 hover:text-blue-500" />
+                <span className="sr-only">Edit</span>
+              </Link>
+            </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => handleDelete(word.id)}
-          className="h-8 w-8 text-red-400 hover:text-red-500"
-        >
-          <Trash className="h-4 w-4" />
-          <span className="sr-only">Delete</span>
-        </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsDeleting(true)}
+              className="h-8 w-8 text-red-400 hover:text-red-500"
+              title="Delete"
+              disabled={isDeleting}
+            >
+              <Trash className="h-4 w-4" />
+              <span className="sr-only">Delete</span>
+            </Button>
+          </>
+        )}
       </div>
     </div>
   ) : (
-    <Card className="border flex flex-col justify-between">
-      <div>
+    <Card
+      className={cn(
+        'border flex flex-col justify-between transition-colors duration-200',
+        isDeleting && 'border-red-400 border-dashed'
+      )}
+    >
+      <div
+        className={cn(
+          'transition-opacity duration-200',
+          isDeleting && 'opacity-50'
+        )}
+      >
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div>
@@ -126,28 +167,42 @@ export default function WordCard({ word, isListView }: WordCardProps) {
         </CardContent>
       </div>
 
-      <CardFooter className="">
-        <Button
-          variant="ghost"
-          size="sm"
-          asChild
-          className="text-muted-foreground hover:text-blue-500 text-sm"
-        >
-          <Link href={`/edit/${word.id}`}>
-            <Pen className="h-4 w-4 mr-1" />
-            Edit
-          </Link>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleDelete(word.id)}
-          className="text-muted-foreground hover:text-destructive text-sm"
-        >
-          <Trash className="h-4 w-4 mr-1" />
-          Delete
-        </Button>
+      <CardFooter className="!pb-1 !pt-1 border-t border-border border-dashed flex justify-end">
+        {isDeleting ? (
+          <ProgressButton
+            duration={DELETING_TIMEOUT}
+            onClick={handleCancelDelete}
+            onComplete={() => handleDelete(word.id)}
+          >
+            <p>Cancel</p>
+          </ProgressButton>
+        ) : (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="text-blue-400 hover:text-blue-500 text-sm"
+              title="Edit"
+            >
+              <Link href={`/edit/${word.id}`}>
+                <Pen className="h-4 w-4" />
+                <span className="sr-only">Edit</span>
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDeleting(true)}
+              className="text-red-400 hover:text-red-500 text-sm"
+              title="Delete"
+              disabled={isDeleting}
+            >
+              <Trash className="h-4 w-4" />
+              <span className="sr-only">Delete</span>
+            </Button>
+          </>
+        )}
       </CardFooter>
     </Card>
   );

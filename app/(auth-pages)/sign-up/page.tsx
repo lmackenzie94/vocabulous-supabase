@@ -21,7 +21,7 @@ export default async function Signup(props: {
   }
 
   return (
-    <div className="min-w-80 mx-auto animate-fade-in">
+    <div className="w-full max-w-sm mx-auto animate-fade-in">
       <div className="flex flex-col items-center text-center mb-8">
         <div className="p-3 rounded-full bg-green-600/10 mb-4">
           <BookMarked className="w-8 h-8 text-green-600" />
