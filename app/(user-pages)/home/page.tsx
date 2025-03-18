@@ -25,7 +25,7 @@ export default async function Home() {
           <BookMarked className="w-10 h-10 text-blue-600" />
         </div>
         <h1 className="text-4xl font-bold tracking-tight">Vocabulous</h1>
-        <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
+        <p className="mt-3 text-base sm:text-lg text-muted-foreground max-w-2xl">
           Build your vocabulary one word at a time.
           <br />
           Add new words, review definitions, and practice until mastery.

@@ -25,8 +25,6 @@ export default async function Stats({ words }: { words: WordWithCategory[] }) {
 
   const wordsPerCategory = getCategoryCounts(words);
 
-  console.log('wordsPerCategory', wordsPerCategory);
-
   const topCategories = Array.from(wordsPerCategory.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);

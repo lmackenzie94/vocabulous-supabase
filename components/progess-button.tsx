@@ -73,9 +73,9 @@ export default function ProgressButton({
         className
       )}
     >
-      <span className="relative z-10">{children}</span>
+      <span className="relative inline-block z-10">{children}</span>
       <div
-        className="absolute inset-0 left-0 top-0 bg-red-500 transition-all"
+        className="absolute z-0 inset-0 left-0 top-0 bg-red-500 transition-all"
         style={{
           width: `${progress * 100}%`,
           transition: isRunning ? 'none' : 'width 0.3s ease-out'

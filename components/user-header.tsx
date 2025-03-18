@@ -51,9 +51,9 @@ export default function UserHeader({ user }: { user: User }) {
   const pathname = usePathname();
 
   return (
-    <div className="relative container mx-auto">
-      <nav className="flex justify-center">
-        <ul className="flex items-center gap-2 sm:gap-6 justify-center">
+    <div className="sm:relative sm:container mx-auto">
+      <nav className="flex px-3 sm:px-0 sm:justify-center">
+        <ul className="flex items-center gap-1 sm:gap-6 justify-center">
           {navItems.map(item => {
             const isActive = pathname === item.path;
             return (
@@ -61,7 +61,7 @@ export default function UserHeader({ user }: { user: User }) {
                 <Link
                   href={item.path}
                   className={cn(
-                    'flex flex-col items-center py-2 px-3 rounded-lg font-medium text-sm transition-all focus-ring button-transition',
+                    'flex flex-col items-center py-2 px-3 rounded-lg font-medium text-xs md:text-sm transition-all focus-ring button-transition',
                     isActive
                       ? `${item.iconColor} ${item.activeBg}`
                       : 'text-muted-foreground hover:text-foreground hover:bg-accent'

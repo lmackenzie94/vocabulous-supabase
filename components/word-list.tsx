@@ -17,7 +17,7 @@ export default function WordList({ words = null }: WordListProps) {
 
   return (
     <>
-      <div className="inline-flex rounded-md shadow-sm mb-4">
+      <div className="hidden md:inline-flex rounded-md shadow-sm mb-4">
         <Button
           variant={isGridView ? 'default' : 'outline'}
           className="rounded-l-md rounded-r-none"

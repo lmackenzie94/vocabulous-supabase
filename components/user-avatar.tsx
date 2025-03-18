@@ -43,48 +43,46 @@ export default function UserAvatar({ user }: { user: User }) {
   }, []);
 
   return (
-    <div>
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger asChild>
-          <button
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-medium text-base sm:text-lg',
+            'transition-all duration-300 hover:ring-2 hover:ring-offset-2 hover:ring-offset-background hover:ring-primary/20',
+            BG_COLOUR,
+            TEXT_COLOUR
+          )}
+          onMouseEnter={() => setIsOpen(true)}
+        >
+          {initial}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56" ref={dropdownRef}>
+        <div className="flex items-center p-2">
+          <div
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center font-medium text-lg',
-              'transition-all duration-300 hover:ring-2 hover:ring-offset-2 hover:ring-offset-background hover:ring-primary/20',
+              'w-8 h-8 rounded-full flex items-center justify-center mr-2',
               BG_COLOUR,
               TEXT_COLOUR
             )}
-            onMouseEnter={() => setIsOpen(true)}
           >
             {initial}
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56" ref={dropdownRef}>
-          <div className="flex items-center p-2">
-            <div
-              className={cn(
-                'w-8 h-8 rounded-full flex items-center justify-center mr-2',
-                BG_COLOUR,
-                TEXT_COLOUR
-              )}
-            >
-              {initial}
-            </div>
-            <div className="flex flex-col space-y-0.5">
-              <p className="text-sm font-medium">{first_name}</p>
-              {user.email && (
-                <p className="text-xs text-muted-foreground">{user.email}</p>
-              )}
-            </div>
           </div>
-          <DropdownMenuSeparator />
-          <ThemeSwitcher />
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer" onClick={signOutAction}>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Sign out</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          <div className="flex flex-col space-y-0.5">
+            <p className="text-sm font-medium">{first_name}</p>
+            {user.email && (
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            )}
+          </div>
+        </div>
+        <DropdownMenuSeparator />
+        <ThemeSwitcher />
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" onClick={signOutAction}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Sign out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

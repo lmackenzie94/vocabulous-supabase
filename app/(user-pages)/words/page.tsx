@@ -15,7 +15,7 @@ export default async function Words() {
           <Library className="w-8 h-8 text-indigo-600" />
         </div>
         <h1 className="text-3xl font-bold">{heading}</h1>
-        <p className="mt-2 text-muted-foreground">
+        <p className="mt-2 text-muted-foreground text-balance">
           Browse, search, and manage your collection of words.
         </p>
       </div>

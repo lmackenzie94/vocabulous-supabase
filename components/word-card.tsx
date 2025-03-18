@@ -147,27 +147,27 @@ export default function WordCard({ word, isListView }: WordCardProps) {
               <Badge className="mb-2 bg-secondary text-secondary-foreground">
                 {word.category.name}
               </Badge>
-              <CardTitle className="text-xl">{word.word}</CardTitle>
-              <CardDescription className="mt-1 line-clamp-2">
-                {word.definition}
-              </CardDescription>
             </div>
             <Badge className={cn('ml-2', getMasteryColor(word.mastery))}>
               {getMasteryLabel(word.mastery)}
             </Badge>
           </div>
+          <CardTitle className="text-xl">{word.word}</CardTitle>
+          <CardDescription className="mt-1 text-sm sm:text-base">
+            {word.definition}
+          </CardDescription>
         </CardHeader>
 
         <CardContent className="pb-3 pt-0">
           {word.example && (
             <div className="mt-2">
-              <p className="italic text-sm">"{word.example}"</p>
+              <p className="italic text-xs sm:text-sm">"{word.example}"</p>
             </div>
           )}
         </CardContent>
       </div>
 
-      <CardFooter className="!pb-1 !pt-1 border-t border-border border-dashed flex justify-end">
+      <CardFooter className="!pb-1 !pt-1 mt-2 border-t border-border border-dashed flex justify-end bg-primary/5">
         {isDeleting ? (
           <ProgressButton
             duration={DELETING_TIMEOUT}
